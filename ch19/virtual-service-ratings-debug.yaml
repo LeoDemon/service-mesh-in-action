@@ -14,7 +14,7 @@ spec:
       fault:
         delay:
           percent: 100
-          fixedDelay: 3s
+          fixedDelay: 5s
       retries:
         attempts: 2
         perTryTimeout: 1s
