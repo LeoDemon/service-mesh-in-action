@@ -4,7 +4,6 @@ metadata:
   labels:
     app: student
   name: student
-  namespace: istio-dev
 spec:
   replicas: 1
   selector:
@@ -28,7 +27,6 @@ metadata:
   labels:
     app: student
   name: student
-  namespace: istio-dev
 spec:
   ports:
   - port: 8080
@@ -39,11 +37,11 @@ spec:
     app: student
   type: ClusterIP
 ---
-apiVersion: networking.istio.io/v1alpha3
+#apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: student
-  namespace: istio-dev
+  name: student-route
 spec:
   hosts:
     - student
@@ -51,8 +49,10 @@ spec:
     - route:
       - destination:
           host: student
-      #retries:
-      #  attempts: 3
-      #  perTryTimeout: 1s
-      timeout: 3s
+      retries:
+        attempts: 3
+        perTryTimeout: 1s
+        retryOn: gateway-error
+        #retryOn: 5xx,gateway-error
+      #timeout: 3s
 

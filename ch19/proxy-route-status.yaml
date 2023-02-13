@@ -1,0 +1,51 @@
+- name: "8080"
+  validateClusters: false
+  virtualHosts:
+  - domains:
+    - '*'
+    includeRequestAttemptCount: true
+    name: allow_any
+    routes:
+    - match:
+        prefix: /
+      name: allow_any
+      route:
+        cluster: PassthroughCluster
+        maxGrpcTimeout: 0s
+        timeout: 0s
+  - domains:
+    - student.istio-dev.svc.cluster.local
+    - student.istio-dev.svc.cluster.local:8080
+    - student
+    - student:8080
+    - student.istio-dev.svc
+    - student.istio-dev.svc:8080
+    - student.istio-dev
+    - student.istio-dev:8080
+    - 10.96.185.164
+    - 10.96.185.164:8080
+    includeRequestAttemptCount: true
+    name: student.istio-dev.svc.cluster.local:8080
+    routes:
+    - decorator:
+        operation: student.istio-dev.svc.cluster.local:8080/*
+      match:
+        prefix: /
+      metadata:
+        filterMetadata:
+          istio:
+            config: /apis/networking.istio.io/v1alpha3/namespaces/istio-dev/virtual-service/student-route
+      route:
+        cluster: outbound|8080||student.istio-dev.svc.cluster.local
+        maxGrpcTimeout: 0s
+        retryPolicy:
+          hostSelectionRetryMaxAttempts: "5"
+          numRetries: 3
+          perTryTimeout: 1s
+          retryHostPredicate:
+          - name: envoy.retry_host_predicates.previous_hosts
+            typedConfig:
+              '@type': type.googleapis.com/envoy.extensions.retry.host.previous_hosts.v3.PreviousHostsPredicate
+          retryOn: gateway-error
+        timeout: 0s
+
