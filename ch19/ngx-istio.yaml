@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ngx-istio
+    version: v1
+  name: ngx-istio
+  namespace: istio-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ngx-istio
+      version: v1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ngx-istio
+        version: v1
+    spec:
+      containers:
+        - image: nginx:1.22.1-alpine
+          name: nginx
+          ports:
+            - containerPort: 80
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ngx-istio
+  name: ngx-istio
+  namespace: istio-dev
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ngx-istio
+  type: ClusterIP
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ngx-istio
+  namespace: istio-dev
+spec:
+  hosts:
+    - ngx-istio
+  http:
+    - route:
+      - destination:
+          host: ngx-istio
+          subset: v1
+      fault:
+        delay:
+          #percent: 100
+          percentage:
+            value: 100.0
+          fixedDelay: 5s
+      #retries:
+      #  attempts: 3
+      #  perTryTimeout: 2s
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: ngx-istio
+  namespace: istio-dev
+spec:
+  host: ngx-istio
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+
