@@ -1,0 +1,22 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: jwk-dev
+  namespace: istio-dev
+spec:
+  selector:
+    matchLabels:
+      app: student
+  jwtRules:
+  - issuer: "jwkljh@163.com"
+    jwks: |
+      {
+        "keys": [
+          {
+            "kty": "RSA",
+            "n": "9fJLD28JA58sJNZU2TPyDH6Z6WWVu4_cpD-RuMu8E-xHO_v3gP8za9Fv9u1H8ZoTV2xpZ7qiKH6WEf4irF5UeprszbON5NzcRmhOuBSj0Vv46m-MuTpV8OXG3nWrbWiPrh4NKoTGKsJo1gcD5sbgauAtbk48kuEmL8H_xlY951Mq3CAlQJRtjjXCg4ndXOF95biWj1pp_R2voqqvgNx4FOjhury3JOrEFqiWAtpIjeP7OD9DiGci4tLc1fg0BnORm-rmlY25sCYhAqCeH6M9hthkFdTzm-GczA5s-4Ays81BfZ6AAX8fnqfSshUn9tzAl1JB03qPzhXcWOwh_qoMMQ",
+            "e": "AQAB"
+          }
+        ]
+      }
+

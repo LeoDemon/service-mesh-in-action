@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: jwt-require-dev
+  namespace: istio-dev
+spec:
+  selector:
+    matchLabels:
+      app: student
+  action: ALLOW
+  rules:
+    - from:
+      - source:
+         requestPrincipals: ["jwkljh@163.com/Jack"]
+      when:
+        - key: request.auth.claims[id]
+          values: ["2030"]

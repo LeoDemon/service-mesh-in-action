@@ -1,0 +1,20 @@
+#apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: student-route
+  namespace: istio-dev
+spec:
+  hosts:
+    - student
+  http:
+    - route:
+      - destination:
+          host: student
+      #retries:
+      #  attempts: 3
+      #  perTryTimeout: 1s
+      #  retryOn: gateway-error
+      #  #retryOn: 5xx,gateway-error
+      #timeout: 3s
+
